@@ -1,0 +1,31 @@
+#detail {
+    h1{
+        padding: 20px;
+        text-align: center;
+    }
+    #profile-box {
+        padding-top: 80px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        img {
+            width: 60px;
+        }
+    }
+    #contents-box {
+        margin-bottom: 40px;
+        div{
+            line-height: 60px;
+            border-bottom: 1px solid #ccc;
+            padding-left: 30px;
+        }
+    }
+}
+#image-box {
+    text-align: center;
+    img {
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+    }
+}
