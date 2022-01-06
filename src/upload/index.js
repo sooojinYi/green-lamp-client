@@ -1,42 +1,95 @@
-import './upload.scss'
+import "antd/dist/antd.css";
+import "./upload.scss";
+import 'antd/dist/antd.css';
+import { useState } from "react";
+import { Form, Divider, Input, InputNumber, Button, Upload } from "antd";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 function UploadPage(){
+    //이미지 경로 상태관리 추가하기
+    const [imageUrl, setImageUrl] = useState(null);
+    const navigate = useNavigate();
+    const onSubmit = (values) =>{
+        axios.post("http://localhost:8080/products",{
+            name: values.name,
+            description: values.description,
+            seller: values.seller,
+            price: parseInt(values.price),
+            imageUrl: "http://localhost:8080/" + imageUrl
+        }).then((result)=>{
+            console.log(result);
+            navigate(-1);
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    }
+    //이미지 처리함수
+    const onChangeImage = (info) => {
+        //파일이 업로드 중일때
+        if(info.file.status === 'uploading'){
+            return;
+        }
+        //파일이 업로드 완료했을때
+        if(info.file.status === 'done'){
+            const response = info.file.response;
+            const imageUrl = response.imageUrl;
+            setImageUrl(imageUrl);
+            console.log(imageUrl);
+        }
+    }
     return(
         <div id="upload" className="innerCon">
             <h2>상품등록하기</h2>
-            <form>
-                <table>
-                    <tr>
-                        <td>상품사진</td>
-                        <td><input type="file" name="img" /></td>
-                    </tr>
-                    <tr>
-                        <td>상품명</td>
-                        <td><input type="text" name="productname" /></td>
-                    </tr>
-                    <tr>
-                        <td>판매자명</td>
-                        <td><input type="text" name="sellername" /></td>
-                    </tr>
-                    <tr>
-                        <td>상품가격</td>
-                        <td><input type="text" name="price" /></td>
-                    </tr>
-                    <tr>
-                        <td>상품소개</td>
-                        <td>
-                            <textarea>
-
-                            </textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <button type="submit">등록</button>
-                            <button type="reset">삭제</button>
-                        </td>
-                    </tr>
-                </table>
-            </form>
+            <Form name="상품업로드" onFinish={onSubmit}>
+                <Form.Item name="upload" label={<div className="upload-label">상품 사진</div>}>
+                    <Upload name="image" 
+                    action="http://localhost:8080/image"
+                    listType="picture"
+                    onChange={onChangeImage}
+                    showUploadList = {false}
+                    >
+                    {/* 이미지가 있으면 이미지를 나타내고 없으면 이미지 업로드 해주세요 */}
+                    {
+                        imageUrl ? (<img src={`http://localhost:8080/${imageUrl}`} alt="이미지" width={200}/>) : (
+                            <div id="upload-img">
+                            <img src="/images/icons/camera.png" alt="카메라" />
+                            <span>이미지를 업로드 해주세요</span>
+                    </div>
+                        )
+                    }
+                    </Upload>
+                </Form.Item>
+                <Form.Item name="seller" label={<div className="upload-label">판매자명</div>}
+                    rules={[{ required: true, message:"판매자 이름을 입력해 주세요"}]}
+                >
+                    <Input placeholder="판매자 이름을 입력해주세요" className="upload-name" />
+                </Form.Item>
+                <Divider />
+                <Form.Item name="name" label={<div className="upload-label">상품명</div>}
+                    rules={[{ required: true, message:"상품 이름을 입력해 주세요"}]}
+                >
+                    <Input placeholder="상품 이름을 입력해주세요" className="upload-name" />
+                </Form.Item>
+                <Divider />
+                <Form.Item name="price" label={<div className="upload-label">상품가격</div>}
+                    rules={[{ required: true, message:"가격을 입력해 주세요"}]}
+                >
+                    <InputNumber size="large" defaultValue={0} />
+                </Form.Item>
+                <Divider />
+                <Form.Item name="description" label={<div className="upload-label">상품소개</div>}>
+                    <Input.TextArea 
+                        placeholder="상품소개를 적어주세요"
+                        maxLength={400}
+                    />
+                </Form.Item>
+                <Divider />
+                <Form.Item>
+                    <Button size="large" htmlType="submit">상품등록하기</Button>
+                    <Button size="large" htmlType="reset">취소</Button>
+                </Form.Item>
+            </Form>
         </div>
     );
 }
