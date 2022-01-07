@@ -1,3 +1,4 @@
+import { API_URL } from "../config/constants";
 import "antd/dist/antd.css";
 import "./upload.scss";
 import 'antd/dist/antd.css';
@@ -10,12 +11,12 @@ function UploadPage(){
     const [imageUrl, setImageUrl] = useState(null);
     const navigate = useNavigate();
     const onSubmit = (values) =>{
-        axios.post("http://localhost:8080/products",{
+        axios.post(`${API_URL}/products`,{
             name: values.name,
             description: values.description,
             seller: values.seller,
             price: parseInt(values.price),
-            imageUrl: "http://localhost:8080/" + imageUrl
+            imageUrl: `${API_URL}/` + imageUrl
         }).then((result)=>{
             console.log(result);
             navigate(-1);
@@ -44,14 +45,14 @@ function UploadPage(){
             <Form name="상품업로드" onFinish={onSubmit}>
                 <Form.Item name="upload" label={<div className="upload-label">상품 사진</div>}>
                     <Upload name="image" 
-                    action="http://localhost:8080/image"
+                    action={`${API_URL}/image`}
                     listType="picture"
                     onChange={onChangeImage}
                     showUploadList = {false}
                     >
                     {/* 이미지가 있으면 이미지를 나타내고 없으면 이미지 업로드 해주세요 */}
                     {
-                        imageUrl ? (<img src={`http://localhost:8080/${imageUrl}`} alt="이미지" width={200}/>) : (
+                        imageUrl ? (<img src={`${API_URL}/${imageUrl}`} alt="이미지" width={200}/>) : (
                             <div id="upload-img">
                             <img src="/images/icons/camera.png" alt="카메라" />
                             <span>이미지를 업로드 해주세요</span>

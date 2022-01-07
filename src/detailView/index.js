@@ -1,14 +1,16 @@
+import { API_URL } from "../config/constants";
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import "./detail.scss"
 function ProductView(){
     const [product, setProduct] = useState(null);
     const param = useParams();
     const {id} = param;
+    const navigate = useNavigate();
     useEffect(()=>{
         axios.get(
-            `http://localhost:8080/products/${id}`
+            `${API_URL}/products/${id}`
         ).then(function(result){
             setProduct(result.data.product);
             console.log(result.data);
@@ -17,6 +19,18 @@ function ProductView(){
             console.log(error);
         })
     },[]);
+    
+    const productDel = ()=>{
+        axios.delete(`${API_URL}/${id}`)
+        .then(function(result){
+            console.log('삭제되었습니다.')
+            navigate(-1)
+        })
+        .catch(function(error){
+            console.log(error)
+        })
+    }
+
     if(product == null){
         return <div>상품정보를 받고있습니다...</div>
     }
@@ -35,6 +49,9 @@ function ProductView(){
                 <div>{product.price}</div>
                 <div>{product.createdAt}</div>
                 <div>{product.description}</div>
+            </div>
+            <div className="btn">
+                <span onClick={productDel}>삭제하기</span>
             </div>
         </div>
     );
