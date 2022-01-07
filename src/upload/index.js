@@ -1,5 +1,5 @@
+import 'antd/dist/antd.min.css';
 import { API_URL } from "../config/constants";
-import "antd/dist/antd.css";
 import "./upload.scss";
 import 'antd/dist/antd.css';
 import { useState } from "react";
